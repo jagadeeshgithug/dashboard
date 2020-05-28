@@ -1,8 +1,8 @@
 from django.urls import path
-from .views import home,products,customers
+from .views import home,products,customer
 
 urlpatterns = [
     path('',home,name="home"),
     path('products/',products,name="products"),
-    path('customer/',customers,name="customer"),
+    path('customer/<str:pk>/',customer,name="customer"),
 ]
