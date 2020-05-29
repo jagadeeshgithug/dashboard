@@ -1,0 +1,12 @@
+
+{% extends "controlapp/main.html" %}
+
+{% block content %}
+<p>Are sure want to delete {{order.product.name}}</p>
+ <form action="", method="POST">
+ 	{% csrf_token %}
+ 	<a href="{% url 'home' %}">cancel</a>
+ 	<input type="submit" name="Delete">
+  </form>
+
+{% endblock %}
