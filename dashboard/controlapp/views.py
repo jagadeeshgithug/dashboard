@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from .models import *
 from .forms import *
+from .filters import *
 # Create your views here.
 
 """this is home page function which is show the all details"""
@@ -29,8 +30,11 @@ def products(request):
 
 	products=Product.objects.all()
 
+	myfilter=productfilter(request.GET,queryset=products)
+	products=myfilter.qs
 	context={
-		'products':products
+		'products':products,
+		'myfilter':myfilter
 	}
 	return render(request, "controlapp/products.html",context)
 
@@ -41,10 +45,14 @@ def customer(request,pk):
 
 	orders=customer.order_set.all()
 	total_orders=orders.count()
+
+	myfilter=orderfilter(request.GET,queryset=orders)
+	orders=myfilter.qs
 	context={
 		'customer':customer,
 		'orders':orders,
-		'total_orders':total_orders
+		'total_orders':total_orders,
+		'myfilter':myfilter
 	}
 	return render(request, "controlapp/customers.html",context)
 
@@ -52,8 +60,12 @@ def customer(request,pk):
 def allorders(request):
 	orders=Order.objects.all()
 
+	myfilter=orderfilter(request.GET,queryset=orders)
+	orders=myfilter.qs
+
 	context={
-		'orders':orders
+		'orders':orders,
+		'myfilter':myfilter
 	}
 
 	return render(request,"controlapp/orders.html",context)

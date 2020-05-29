@@ -4,17 +4,30 @@
 {% block content %}
 
 <br>
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+			<form method="get">
+				
+				{{myfilter.form}}
+				<button class="btn btn-primary" type="submit">Search</button>
+			</form>
+		</div>
+	</div>
+</div>
 
+<br>
 <div class="row">
 	<div class="col-md">
 		<div class="card card-body">
 			<h5>Orders</h5>
 		</div>
-		<div class="card card-body">
+		<div class="card card-body" id="auto-table">
 			<table class="
 			table table-sm">
 
 			<tr>
+				<th>Sr.no</th>
 				<th>Product</th>
 				<th>Date Orderd</th>
 				<th>Status</th>
@@ -23,6 +36,7 @@
 			</tr>
 			{% for order in orders %}
 				<tr>
+					<td></td>
 					<td>{{order.product}}</td>
 					<td>{{order.date_created}}</td>
 					<td>{{order.status}}</td>

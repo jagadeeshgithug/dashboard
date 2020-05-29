@@ -41,9 +41,9 @@
 			<a class="btn btn-primary btn-sm btn-block" href="{% url 'allorders' %}">ALL Orders</a>
 			
 			<table class="
-			table table-sm">
-
+			table table-sm" id="auto-table">
 			<tr>
+				<th>Sr.no</th>
 				<th>Product</th>
 				<th>Date Orderd</th>
 				<th>Status</th>
@@ -52,6 +52,7 @@
 			</tr>
 			{% for order in orders %}
 				<tr>
+					<td></td>
 					<td>{{order.product}}</td>
 					<td>{{order.date_created}}</td>
 					<td>{{order.status}}</td>

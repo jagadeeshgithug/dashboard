@@ -38,6 +38,8 @@
 		<div class="card card-body">
 			<form method="get">
 				
+				<p>product : {{myfilter.form.product}}</p>
+				<p>status: {{myfilter.form.status}}</p>
 				<button class="btn btn-primary" type="submit">Search</button>
 			</form>
 		</div>
@@ -63,8 +65,8 @@
 						<td>{{ order.product.category }}</td>
 						<td>{{ order.date_created }}</td>
 						<td>{{ order.status }}</td>
-						<td><a class="btn btn-sm btn-info" href="#">Update</a></td>
-						<td><a class="btn btn-sm btn-danger" href="#">Delete</a></td>
+						<td><a class="btn btn-sm btn-info" href="{% url 'orderupdate' order.id %}">Update</a></td>
+					<td><a class="btn btn-sm btn-danger" href="{% url 'deleteorder' order.id %}">Delete</a></td>
 					</tr>
 				{% endfor %}
 			</table>
