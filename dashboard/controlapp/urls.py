@@ -12,6 +12,7 @@ urlpatterns = [
     path('productupdate/<str:pk>/',productupdate,name="productupdate"),
     path('deleteproduct/<str:pk>/',deleteproduct,name="deleteproduct"),
     path('userpage/',userpage,name='userpage'),
+    path('account_settings/',account_settings,name='account_settings'),
 
     path('register/',registerpage,name='register'),
     path('login/',loginpage,name='login'),

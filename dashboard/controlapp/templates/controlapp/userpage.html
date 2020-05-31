@@ -5,6 +5,28 @@
 {% include "controlapp/status.html" %}
 
 
-<h1>user page</h1>
+<br>
+<div class="row">
+	<div class="col-md">
+		<div card card-body>
+			<table class="table table-sm">
+				<tr>
+					<th>Product</th>
+					<th>Category</th>
+					<th>Date Orderd</th>
+					<th>Status</th>
+				</tr>
+				{% for order in orders %}
+					<tr>
+						<td>{{ order.product }}</td>
+						<td>{{ order.product.category }}</td>
+						<td>{{ order.date_created }}</td>
+						<td>{{ order.status }}</td>
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+</div>
 
 {% endblock %}

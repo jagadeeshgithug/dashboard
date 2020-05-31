@@ -14,7 +14,6 @@ from .decorators import unauthenticate_user,allowed_users,admin_only
 @unauthenticate_user
 def registerpage(request):
 	form=usercreationform()
-
 	if request.method == 'POST':
 		form=usercreationform(request.POST)
 		if form.is_valid():
@@ -22,6 +21,14 @@ def registerpage(request):
 			group=Group.objects.get(name='customers')
 			user.groups.add(group)
 			username=form.cleaned_data.get('username')
+			email=form.cleaned_data.get('email')
+			phone=request.POST.get('phone')
+			Customer.objects.create(
+				user=user,
+				name=username,
+				email=email,
+				phone=phone
+				)
 			messages.success(request,"Account succesfully create for "+ username)
 			return redirect('/login/')
 
@@ -212,4 +219,31 @@ def deleteproduct(request,pk):
 
 @login_required(login_url='login')
 def userpage(request):
-	return render(request,"controlapp/userpage.html")
+	orders=request.user.customer.order_set.all()
+	total_orders=orders.count()
+	pending=orders.filter(status='Pending').count()
+	deliverd=orders.filter(status='Deliverd').count()
+	
+	context={
+		'orders':orders,
+		'total_orders':total_orders,
+		'pending':pending,
+		'deliverd':deliverd
+	}
+	return render(request,"controlapp/userpage.html",context)
+
+
+def account_settings(request):
+	customer=request.user.customer
+	form=customerdetialform(instance=customer)
+
+	if request.method=='POST':
+		form=customerdetialform(request.POST,request.FILES,instance=customer)
+		if form.is_valid():
+			form.save()
+			return redirect('userpage')
+
+	context={
+		'form':form
+	}
+	return render(request,'controlapp/account_settings.html',context)
