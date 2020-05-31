@@ -1,12 +1,55 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
+from django.contrib import messages
+from django.contrib.auth.models import User,Group 
+from django.contrib.auth import authenticate,login,logout 
+from django.contrib.auth.decorators import login_required
 from .models import *
 from .forms import *
 from .filters import *
+from .decorators import unauthenticate_user,allowed_users,admin_only
 # Create your views here.
 
 """this is home page function which is show the all details"""
+@unauthenticate_user
+def registerpage(request):
+	form=usercreationform()
 
+	if request.method == 'POST':
+		form=usercreationform(request.POST)
+		if form.is_valid():
+			user=form.save()
+			group=Group.objects.get(name='customers')
+			user.groups.add(group)
+			username=form.cleaned_data.get('username')
+			messages.success(request,"Account succesfully create for "+ username)
+			return redirect('/login/')
+
+	context={
+		'form':form
+	}
+	return render(request,"controlapp/register.html",context)
+@unauthenticate_user
+def loginpage(request):
+	if request.method=='POST':
+		username=request.POST.get('username')
+		password=request.POST.get('password')
+
+		user=authenticate(request,username=username,password=password)
+
+		if user is not None:
+			login(request,user)
+			return redirect('home')
+		else:
+			messages.info(request,"Username OR Password is incorrect")
+	return render(request,'controlapp/login.html')
+
+def logoutpage(request):
+	logout(request)
+	return redirect('login')
+
+@login_required(login_url='login')
+@admin_only
 def home(request):
 	orders=Order.objects.all()
 	top_orders=Order.objects.order_by('-id')[0:5]
@@ -25,7 +68,8 @@ def home(request):
 	return render(request, "controlapp/dashboard.html",context)
 
 """this is product details page"""
-
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])	
 def products(request):
 
 	products=Product.objects.all()
@@ -39,7 +83,8 @@ def products(request):
 	return render(request, "controlapp/products.html",context)
 
 """this is customer details page"""
-
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])	
 def customer(request,pk):
 	customer=Customer.objects.get(id=pk)
 
@@ -56,7 +101,8 @@ def customer(request,pk):
 	}
 	return render(request, "controlapp/customers.html",context)
 
-
+@login_required(login_url='login')	
+@allowed_users(allowed_roles=['admin'])
 def allorders(request):
 	orders=Order.objects.all()
 
@@ -69,8 +115,11 @@ def allorders(request):
 	}
 
 	return render(request,"controlapp/orders.html",context)
-"""this function is update the status of the orders"""
 
+
+"""this function is update the status of the orders"""
+@login_required(login_url='login')	
+@allowed_users(allowed_roles=['admin'])
 def orderupdate(request,pk):
 
 	order=Order.objects.get(id=pk)
@@ -92,7 +141,8 @@ def orderupdate(request,pk):
 
 
 """this function is delete the order"""
-
+@login_required(login_url='login')	
+@allowed_users(allowed_roles=['admin'])
 def deleteorder(request,pk):
 
 	order=Order.objects.get(id=pk)
@@ -107,6 +157,9 @@ def deleteorder(request,pk):
 
 	return render(request,"controlapp/orderdelete.html",context)
 
+
+@login_required(login_url='login')	
+@allowed_users(allowed_roles=['admin'])
 def createproduct(request):
 
 	form=productform()
@@ -124,9 +177,9 @@ def createproduct(request):
 	return render(request,'controlapp/product_form.html',context)
 
 
-
+@login_required(login_url='login')	
+@allowed_users(allowed_roles=['admin'])
 def productupdate(request,pk):
-
 	product=Product.objects.get(id=pk)
 
 	form=productform(instance=product)
@@ -140,11 +193,11 @@ def productupdate(request,pk):
 	context={
 		'form':form
 	}
-
 	return render(request,'controlapp/product_form.html',context)
 
+@login_required(login_url='login')	
+@allowed_users(allowed_roles=['admin'])
 def deleteproduct(request,pk):
-
 	product=Product.objects.get(id=pk)
 
 	if request.method=='POST':
@@ -154,5 +207,9 @@ def deleteproduct(request,pk):
 	context={
 		'product':product
 	}
-
 	return render(request,"controlapp/productdelete.html",context)
+
+
+@login_required(login_url='login')
+def userpage(request):
+	return render(request,"controlapp/userpage.html")
